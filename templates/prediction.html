@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Прогноз на матч - Betskaners{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <div class="card prediction-card mb-4">
+            <div class="card-body">
+                <h4 class="card-title text-center mb-4">{{ match.tournament_name }}</h4>
+                
+                <div class="row align-items-center text-center">
+                    <div class="col-5">
+                        <div class="team-block">
+                            <img src="{{ match.team1.logo_url }}" alt="{{ match.team1.name }}" class="team-logo mb-2">
+                            <h5 class="team-name">{{ match.team1.name }}</h5>
+                            <div class="text-muted small">Рейтинг: {{ match.team1.rating }}</div>
+                            <div class="coefficient">{{ team1_coef }}</div>
+                            <div class="text-muted small">Побед: {{ match.team1.wins }}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-2">
+                        <div class="vs-block">
+                            <div class="h3 mb-2">VS</div>
+                            <div class="badge bg-{{ 'warning' if match.status.value == 'live' else 'primary' }}">
+                                {{ match.status.value | upper }}
+                            </div>
+                            {% if match.status.value == 'live' %}
+                            <div class="match-score mt-2">
+                                {{ match.score_team1 }} : {{ match.score_team2 }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="col-5">
+                        <div class="team-block">
+                            <img src="{{ match.team2.logo_url }}" alt="{{ match.team2.name }}" class="team-logo mb-2">
+                            <h5 class="team-name">{{ match.team2.name }}</h5>
+                            <div class="text-muted small">Рейтинг: {{ match.team2.rating }}</div>
+                            <div class="coefficient">{{ team2_coef }}</div>
+                            <div class="text-muted small">Побед: {{ match.team2.wins }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title mb-4">Сделать прогноз</h5>
+                <form method="POST" class="prediction-form">
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-md-5">
+                            <div class="form-check prediction-option">
+                                <input class="form-check-input" type="radio" name="winner_id" 
+                                       value="{{ match.team1_id }}" id="team1" required>
+                                <label class="form-check-label w-100" for="team1">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>{{ match.team1.name }}</span>
+                                        <span class="coefficient">{{ team1_coef }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-check prediction-option">
+                                <input class="form-check-input" type="radio" name="winner_id" 
+                                       value="{{ match.team2_id }}" id="team2" required>
+                                <label class="form-check-label w-100" for="team2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>{{ match.team2.name }}</span>
+                                        <span class="coefficient">{{ team2_coef }}</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Сделать прогноз</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if match.status.value == 'live' %}
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Статистика матча</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{{ match.team1.name }}</th>
+                                <th class="text-center">Показатель</th>
+                                <th class="text-end">{{ match.team2.name }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ match.team1.wins }}</td>
+                                <td class="text-center">Победы</td>
+                                <td class="text-end">{{ match.team2.wins }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ match.team1.rating }}</td>
+                                <td class="text-center">Рейтинг</td>
+                                <td class="text-end">{{ match.team2.rating }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ (match.team1.wins / match.team1.total_matches * 100) | round(1) }}%</td>
+                                <td class="text-center">Винрейт</td>
+                                <td class="text-end">{{ (match.team2.wins / match.team2.total_matches * 100) | round(1) }}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if prediction %}
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Анализ матча</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Вероятности победы</h6>
+                        <div class="progress mb-3" style="height: 25px;">
+                            {% set team1_width = (prediction.team1_win_probability * 100) | round %}
+                            {% set team2_width = (prediction.team2_win_probability * 100) | round %}
+                            <div class="progress-bar bg-primary" 
+                                 role="progressbar" 
+                                 style="width: {{ team1_width }}%"
+                                 aria-valuenow="{{ team1_width }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                                <span class="progress-text">{{ match.team1.name }} ({{ team1_width }}%)</span>
+                            </div>
+                            <div class="progress-bar bg-danger" 
+                                 role="progressbar" 
+                                 style="width: {{ team2_width }}%"
+                                 aria-valuenow="{{ team2_width }}"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                                <span class="progress-text">{{ match.team2.name }} ({{ team2_width }}%)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            {% set confidence = (prediction.prediction_confidence * 100) | round %}
+                            <strong>Уверенность в прогнозе:</strong> {{ confidence }}%
+                            {% if confidence > 75 %}
+                            <div class="mt-2 small text-success">
+                                <i class="fas fa-check-circle"></i> Высокая уверенность в прогнозе
+                            </div>
+                            {% elif confidence > 50 %}
+                            <div class="mt-2 small text-warning">
+                                <i class="fas fa-exclamation-circle"></i> Средняя уверенность в прогнозе
+                            </div>
+                            {% else %}
+                            <div class="mt-2 small text-danger">
+                                <i class="fas fa-question-circle"></i> Низкая уверенность в прогнозе
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Ключевые факторы</h6>
+                        <ul class="list-unstyled">
+                            {% for factor, value in prediction.features_importance.items() %}
+                            <li>
+                                <small>{{ factor }}: 
+                                    <span class="text-{{ 'success' if value > 0 else 'danger' }}">
+                                        {{ "%.2f"|format(value) }}
+                                    </span>
+                                </small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<div id="loading-indicator" class="d-none">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+    </div>
+</div>
+
+{% if match.status.value == 'live' %}
+<script>
+function showLoading() {
+    document.getElementById('loading-indicator').classList.remove('d-none');
+}
+
+function hideLoading() {
+    document.getElementById('loading-indicator').classList.add('d-none');
+}
+
+function updateMatchScore() {
+    showLoading();
+    fetch('/api/matches/live')
+        .then(response => response.json())
+        .then(data => {
+            const matchId = parseInt("{{ match.id }}");
+            const liveMatch = data.matches.find(function(m) {
+                return m.id === matchId;
+            });
+            
+            if (liveMatch) {
+                const scoreElement = document.querySelector('.match-score');
+                if (scoreElement) {
+                    const newScore = `${liveMatch.score_team1} : ${liveMatch.score_team2}`;
+                    scoreElement.textContent = newScore;
+                    scoreElement.classList.add('updating');
+                    setTimeout(function() {
+                        scoreElement.classList.remove('updating');
+                    }, 300);
+                }
+            }
+        })
+        .catch(function(error) {
+            console.error('Error updating match score:', error);
+        })
+        .finally(function() {
+            hideLoading();
+        });
+}
+
+// Запускаем обновление при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    updateMatchScore();
+    // Обновляем счет каждые 30 секунд
+    setInterval(updateMatchScore, 30000);
+});
+</script>
+{% endif %}
+{% endblock %} 

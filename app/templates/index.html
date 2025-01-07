@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Betskaners{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">Live матчи</h1>
+            
+            {% if matches %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                {% for match in matches %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ match.tournament_name }}</h5>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="team">
+                                    <img src="{{ match.team1.logo_url }}" alt="{{ match.team1.name }}" class="team-logo">
+                                    <span>{{ match.team1.name }}</span>
+                                </div>
+                                <div class="score">
+                                    {% if match.status == 'live' %}
+                                    <span class="badge bg-danger">LIVE</span>
+                                    <div class="match-score">
+                                        {{ match.score_team1 }} : {{ match.score_team2 }}
+                                    </div>
+                                    {% else %}
+                                    <span class="badge bg-primary">{{ match.status | upper }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="team text-end">
+                                    <span>{{ match.team2.name }}</span>
+                                    <img src="{{ match.team2.logo_url }}" alt="{{ match.team2.name }}" class="team-logo">
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a href="{{ url_for('get_prediction', match_id=match.id) }}" class="btn btn-primary">
+                                    Сделать прогноз
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info text-center">
+                В данный момент нет активных матчей
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

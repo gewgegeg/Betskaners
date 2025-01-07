@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Прогноз на матч {{ match.team1.name }} vs {{ match.team2.name }} - Betskaners{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center mb-4">Прогноз на матч</h1>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center">{{ match.tournament_name }}</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="team text-center">
+                            <img src="{{ match.team1.logo_url }}" alt="{{ match.team1.name }}" class="team-logo mb-2" style="width: 64px; height: 64px;">
+                            <h4>{{ match.team1.name }}</h4>
+                            <div class="stats">
+                                <p>Рейтинг: {{ match.team1.rating }}</p>
+                                <p>Винрейт: {{ (match.team1.wins / match.team1.total_matches * 100) | round(1) }}%</p>
+                            </div>
+                        </div>
+                        
+                        <div class="vs">
+                            <h3>VS</h3>
+                            {% if match.status == 'live' %}
+                            <div class="score">
+                                <span class="badge bg-danger">LIVE</span>
+                                <div class="match-score">{{ match.score_team1 }} : {{ match.score_team2 }}</div>
+                            </div>
+                            {% elif match.status == 'scheduled' %}
+                            <div class="time">
+                                <span class="badge bg-primary">{{ match.start_time.strftime('%H:%M') }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="team text-center">
+                            <img src="{{ match.team2.logo_url }}" alt="{{ match.team2.name }}" class="team-logo mb-2" style="width: 64px; height: 64px;">
+                            <h4>{{ match.team2.name }}</h4>
+                            <div class="stats">
+                                <p>Рейтинг: {{ match.team2.rating }}</p>
+                                <p>Винрейт: {{ (match.team2.wins / match.team2.total_matches * 100) | round(1) }}%</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="prediction-form text-center">
+                        <h4 class="mb-3">Сделать прогноз</h4>
+                        {% if match.status == 'scheduled' %}
+                        <form action="/api/v1/predictions" method="POST" class="d-inline-block">
+                            <input type="hidden" name="match_id" value="{{ match.id }}">
+                            <div class="btn-group" role="group">
+                                <button type="submit" name="winner" value="{{ match.team1.id }}" class="btn btn-outline-primary">
+                                    {{ match.team1.name }}
+                                </button>
+                                <button type="submit" name="winner" value="{{ match.team2.id }}" class="btn btn-outline-primary">
+                                    {{ match.team2.name }}
+                                </button>
+                            </div>
+                        </form>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            Прием прогнозов на этот матч закрыт
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

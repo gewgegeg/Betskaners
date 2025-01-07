@@ -1,0 +1,75 @@
+/* Общие стили */
+body {
+    background-color: #f8f9fa;
+}
+
+/* Стили для карточек матчей */
+.card {
+    transition: transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Стили для команд */
+.team {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.team-logo {
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Стили для счета */
+.match-score {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+/* Анимация обновления счета */
+.score-update {
+    animation: scoreUpdate 0.5s ease-in-out;
+}
+
+@keyframes scoreUpdate {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Стили для статуса матча */
+.badge {
+    font-size: 0.8rem;
+    padding: 0.4em 0.8em;
+}
+
+/* Стили для навигации */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    font-weight: 500;
+}
+
+/* Стили для футера */
+.footer {
+    margin-top: auto;
+    border-top: 1px solid #dee2e6;
+}

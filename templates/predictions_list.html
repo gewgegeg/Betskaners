@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Мои прогнозы - Betskaners{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Мои прогнозы</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Матч</th>
+                                <th>Турнир</th>
+                                <th>Прогноз</th>
+                                <th>Коэффициент</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prediction in predictions %}
+                            <tr>
+                                <td>{{ prediction.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                                <td>
+                                    {{ prediction.match.team1.name }} vs {{ prediction.match.team2.name }}
+                                </td>
+                                <td>{{ prediction.match.tournament_name }}</td>
+                                <td>
+                                    <span class="text-primary">{{ prediction.predicted_winner.name }}</span>
+                                </td>
+                                <td>{{ prediction.coefficient }}</td>
+                                <td>
+                                    {% if prediction.status.value == 'pending' %}
+                                        <span class="badge bg-primary">Ожидание</span>
+                                    {% elif prediction.status.value == 'active' %}
+                                        <span class="badge bg-warning">В игре</span>
+                                    {% elif prediction.status.value == 'win' %}
+                                        <span class="badge bg-success">Выигрыш</span>
+                                    {% elif prediction.status.value == 'loss' %}
+                                        <span class="badge bg-danger">Проигрыш</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Отменен</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

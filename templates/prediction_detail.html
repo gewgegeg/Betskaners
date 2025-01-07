@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Прогноз на матч - Betskaners{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">Прогноз на матч</h1>
+        <div class="card">
+            <div class="card-body">
+                <h2>{{ match.team1.name }} vs {{ match.team2.name }}</h2>
+                <p class="lead">{{ match.tournament_name }}</p>
+                <p>Дата: {{ match.start_time.strftime('%d.%m.%Y %H:%M') }}</p>
+                <p>Формат: {{ match.format.value }}</p>
+                
+                <form method="POST" class="mt-4">
+                    <div class="mb-3">
+                        <label class="form-label">Выберите победителя:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="winner_id" value="{{ match.team1_id }}" id="team1" required>
+                            <label class="form-check-label" for="team1">
+                                {{ match.team1.name }}
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="winner_id" value="{{ match.team2_id }}" id="team2">
+                            <label class="form-check-label" for="team2">
+                                {{ match.team2.name }}
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="confidence" class="form-label">Уверенность в прогнозе (0-1):</label>
+                        <input type="number" class="form-control" id="confidence" name="confidence" 
+                               min="0" max="1" step="0.1" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Сделать прогноз</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

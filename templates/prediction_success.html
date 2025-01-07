@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Прогноз принят - Betskaners{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center">
+                <h1 class="text-success mb-4">✓</h1>
+                <h2 class="mb-4">Прогноз успешно принят!</h2>
+                <p class="mb-4">
+                    Вы поставили на победу команды <strong>{{ prediction.predicted_winner.name }}</strong><br>
+                    с коэффициентом <strong>{{ prediction.coefficient }}</strong>
+                </p>
+                <div class="mb-4">
+                    <a href="/predictions" class="btn btn-primary">Мои прогнозы</a>
+                    <a href="/matches" class="btn btn-outline-primary">К матчам</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{ team.name }} - Betskaners{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            {% if team.logo_url %}
+            <img src="{{ team.logo_url }}" class="card-img-top" alt="{{ team.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h1 class="card-title">{{ team.name }}</h1>
+                <div class="stats mt-3">
+                    <p><strong>Рейтинг:</strong> {{ team.rating }}</p>
+                    <p><strong>Всего матчей:</strong> {{ team.total_matches }}</p>
+                    <p><strong>Победы:</strong> {{ team.wins }}</p>
+                    <p><strong>Поражения:</strong> {{ team.losses }}</p>
+                    <p><strong>Винрейт:</strong> 
+                        {% if team.total_matches > 0 %}
+                            {{ (team.wins / team.total_matches * 100) | round(1) }}%
+                        {% else %}
+                            0%
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <h2>Последние матчи</h2>
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Турнир</th>
+                                <th>Противник</th>
+                                <th>Формат</th>
+                                <th>Результат</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for match in recent_matches %}
+                            <tr>
+                                <td>{{ match.start_time.strftime('%d.%m.%Y') }}</td>
+                                <td>{{ match.tournament_name }}</td>
+                                <td>
+                                    {% if match.team1_id == team.id %}
+                                        {{ match.team2.name }}
+                                    {% else %}
+                                        {{ match.team1.name }}
+                                    {% endif %}
+                                </td>
+                                <td>{{ match.format.value }}</td>
+                                <td>
+                                    {% if match.status.value == 'finished' %}
+                                        {% if match.winner_id == team.id %}
+                                            <span class="text-success">Победа</span>
+                                        {% else %}
+                                            <span class="text-danger">Поражение</span>
+                                        {% endif %}
+                                    {% else %}
+                                        {{ match.status.value }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

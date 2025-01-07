@@ -1,0 +1,45 @@
+betskaners/
+├── app/
+│   ├── api/
+│   │   ├── endpoints/
+│   │   │   ├── __init__.py
+│   │   │   ├── matches.py
+│   │   │   ├── predictions.py
+│   │   │   └── teams.py
+│   │   └── __init__.py
+│   ├── db/
+│   │   ├── __init__.py
+│   │   ├── base.py
+│   │   └── init_db.py
+│   ├── ml/
+│   │   ├── __init__.py
+│   │   └── prediction_model.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── match.py
+│   │   ├── prediction.py
+│   │   └── team.py
+│   ├── static/
+│   │   ├── css/
+│   │   │   └── style.css
+│   │   └── js/
+│   │       └── live-updates.js
+│   └── templates/
+│       ├── base.html
+│       ├── matches.html
+│       ├── prediction.html
+│       ├── prediction_success.html
+│       ├── predictions_list.html
+│       └── teams.html
+├── scripts/
+│   └── reset_db.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_matches.py
+│   ├── test_predictions.py
+│   └── test_teams.py
+├── .env
+├── .gitignore
+├── main.py
+├── requirements.txt
+└── README.md 
